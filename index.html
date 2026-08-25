@@ -3,237 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f3f0e8">
+<meta name="theme-color" content="#f3f0e8" id="themeColor">
 <title>WhatNow — Find the move</title>
 <style>
 :root{
-  --bg:#f3f0e8;
-  --paper:#fffdf8;
-  --ink:#0d0e0f;
-  --muted:#676a6f;
-  --line:#d9d4c8;
-  --lime:#c7ff3d;
-  --blue:#5e7bff;
-  --peach:#ffb38c;
-  --shadow:0 18px 50px rgba(20,20,20,.10);
+  --bg:#f3f0e8; --paper:#fffdf8; --ink:#0d0e0f; --muted:#676a6f; --line:#d9d4c8;
+  --accent:#c7ff3d; --accent2:#5e7bff; --accent3:#ffb38c; --soft:#eeeadf; --soft2:#e9edff;
+  --nav:#0d0e0f; --navText:#aeb1b5; --navActive:#fff; --shadow:0 18px 50px rgba(20,20,20,.10);
+  --cardRadius:24px; --panelRadius:28px; --blur:0px;
+}
+html[data-theme="midnight"]{
+  --bg:#07090d; --paper:#10141b; --ink:#f6f8fb; --muted:#8e99aa; --line:#27303d;
+  --accent:#a7ff3f; --accent2:#7b61ff; --accent3:#ff4fa3; --soft:#171d26; --soft2:#17162b;
+  --nav:#0b0f15; --navText:#778394; --navActive:#1d2632; --shadow:0 22px 70px rgba(0,0,0,.38);
+  --cardRadius:22px; --panelRadius:24px;
+}
+html[data-theme="glass"]{
+  --bg:#dcecff; --paper:rgba(255,255,255,.62); --ink:#0d2340; --muted:#55708f; --line:rgba(62,109,164,.25);
+  --accent:#78d8ff; --accent2:#4c6fff; --accent3:#a7f2e6; --soft:rgba(255,255,255,.42); --soft2:rgba(116,170,255,.16);
+  --nav:rgba(12,36,65,.84); --navText:#a9c1dc; --navActive:rgba(255,255,255,.92); --shadow:0 20px 60px rgba(44,95,150,.18);
+  --cardRadius:28px; --panelRadius:30px; --blur:20px;
+}
+html[data-theme="sunset"]{
+  --bg:#fff2e9; --paper:#fffaf5; --ink:#351819; --muted:#8b5d59; --line:#e9c7bb;
+  --accent:#ff9f5a; --accent2:#ff5f8f; --accent3:#ffd76a; --soft:#fde4d6; --soft2:#ffe3ec;
+  --nav:#3a1e22; --navText:#c8a5a6; --navActive:#fff4ee; --shadow:0 18px 54px rgba(123,53,43,.14);
+  --cardRadius:26px; --panelRadius:30px;
+}
+html[data-theme="mono"]{
+  --bg:#f5f5f5; --paper:#fff; --ink:#000; --muted:#666; --line:#cfcfcf;
+  --accent:#fff; --accent2:#000; --accent3:#e8e8e8; --soft:#ededed; --soft2:#f5f5f5;
+  --nav:#000; --navText:#aaa; --navActive:#fff; --shadow:none;
+  --cardRadius:8px; --panelRadius:10px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bg);scroll-behavior:smooth}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif}
-button,textarea,input{font:inherit;color:inherit}
-button{cursor:pointer}
+html{background:var(--bg);scroll-behavior:smooth;transition:background .22s}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;transition:background .22s,color .22s}
+html[data-theme="glass"] body{background:radial-gradient(circle at 10% 10%,rgba(96,188,255,.34),transparent 35%),radial-gradient(circle at 90% 18%,rgba(88,109,255,.23),transparent 28%),var(--bg)}
+html[data-theme="midnight"] body{background:radial-gradient(circle at 0 0,rgba(123,97,255,.14),transparent 30%),radial-gradient(circle at 100% 12%,rgba(255,79,163,.09),transparent 25%),var(--bg)}
+button,textarea,input{font:inherit;color:inherit}button{cursor:pointer}
 .shell{width:min(100%,980px);margin:0 auto;padding:0 16px 110px}
-.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;background:linear-gradient(var(--bg) 74%,rgba(243,240,232,0))}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;background:linear-gradient(var(--bg) 74%,transparent)}
+html[data-theme="glass"] .topbar{backdrop-filter:blur(12px);background:linear-gradient(rgba(220,236,255,.88) 74%,transparent)}
 .logo{display:flex;align-items:center;gap:9px;font-weight:1000;letter-spacing:-.7px;font-size:21px}
-.logoMark{width:28px;height:28px;border-radius:9px;background:var(--ink);position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-.logoMark:before{content:"";position:absolute;width:10px;height:10px;border-radius:999px;background:var(--lime);left:5px;top:5px;box-shadow:8px 8px 0 var(--blue)}
-.locationBtn{border:1px solid var(--line);background:rgba(255,253,248,.9);border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;box-shadow:0 5px 18px rgba(0,0,0,.04)}
-.locationBtn.on{background:var(--lime);border-color:var(--ink)}
-.hero{padding:25px 0 12px}
-.kicker{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.8px}
-.kickerDot{width:9px;height:9px;border-radius:50%;background:var(--blue)}
-h1{font-size:clamp(48px,12vw,86px);line-height:.88;letter-spacing:-5px;margin:14px 0 14px;font-weight:1000;max-width:860px}
-.heroAccent{display:inline;box-shadow:inset 0 -.37em 0 var(--lime)}
+.logoMark{width:28px;height:28px;border-radius:9px;background:var(--ink);position:relative}
+.logoMark:before{content:"";position:absolute;width:10px;height:10px;border-radius:999px;background:var(--accent);left:5px;top:5px;box-shadow:8px 8px 0 var(--accent2)}
+html[data-theme="mono"] .logoMark{border-radius:0}
+.locationBtn{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;box-shadow:0 5px 18px rgba(0,0,0,.04)}
+.locationBtn.on{background:var(--accent);border-color:var(--ink);color:var(--ink)}
+.hero{padding:25px 0 12px}.kicker{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:.8px}.kickerDot{width:9px;height:9px;border-radius:50%;background:var(--accent2)}
+h1{font-size:clamp(48px,12vw,86px);line-height:.88;letter-spacing:-5px;margin:14px 0 14px;font-weight:1000;max-width:860px}.heroAccent{display:inline;box-shadow:inset 0 -.37em 0 var(--accent)}
+html[data-theme="midnight"] .heroAccent{box-shadow:none;color:var(--accent)}
+html[data-theme="glass"] .heroAccent{box-shadow:none;background:linear-gradient(120deg,var(--accent2),#0fa5e9);-webkit-background-clip:text;background-clip:text;color:transparent}
+html[data-theme="mono"] .heroAccent{box-shadow:inset 0 -.08em 0 var(--ink)}
 .heroCopy{max-width:680px;font-size:17px;line-height:1.45;color:var(--muted);font-weight:700;margin:0}
-.searchCard{margin-top:24px;background:var(--paper);border:1.5px solid var(--ink);border-radius:28px;box-shadow:var(--shadow);overflow:hidden}
-.searchTop{padding:17px 17px 8px}
-.promptLabel{font-size:11px;text-transform:uppercase;letter-spacing:.85px;font-weight:1000;color:var(--muted);margin-bottom:8px}
-textarea{width:100%;min-height:88px;resize:none;border:0;background:transparent;outline:0;padding:0;font-size:20px;line-height:1.35;font-weight:780}
-textarea::placeholder{color:#a5a097}
+.searchCard{margin-top:24px;background:var(--paper);border:1.5px solid var(--ink);border-radius:var(--panelRadius);box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(var(--blur))}
+html[data-theme="glass"] .searchCard{border-color:rgba(255,255,255,.72)}html[data-theme="mono"] .searchCard{border-width:2px}
+.searchTop{padding:17px 17px 8px}.promptLabel{font-size:11px;text-transform:uppercase;letter-spacing:.85px;font-weight:1000;color:var(--muted);margin-bottom:8px}
+textarea{width:100%;min-height:88px;resize:none;border:0;background:transparent;outline:0;padding:0;font-size:20px;line-height:1.35;font-weight:780}textarea::placeholder{color:var(--muted);opacity:.58}
 .searchBottom{border-top:1px solid var(--line);padding:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.modeSwitch{display:flex;gap:5px;background:#eeeadf;border-radius:999px;padding:4px}
-.modeBtn{border:0;background:transparent;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:950;color:var(--muted)}
-.modeBtn.active{background:var(--ink);color:#fff}
-.searchActions{display:flex;gap:7px;align-items:center}
-.iconBtn,.askBtn{border-radius:999px;font-weight:950}
-.iconBtn{width:42px;height:42px;border:1px solid var(--line);background:#f7f4ec;font-size:18px}
-.askBtn{border:1.5px solid var(--ink);background:var(--lime);padding:11px 16px;min-width:110px}
-.askBtn:disabled{opacity:.55}
-.quickRow{display:flex;gap:8px;overflow-x:auto;padding:15px 0 4px;scrollbar-width:none}
-.quickRow::-webkit-scrollbar{display:none}
-.quick{white-space:nowrap;border:1px solid var(--line);background:var(--paper);border-radius:15px;padding:10px 12px;font-size:13px;font-weight:900}
-.quick:nth-child(2n){background:#e9edff}.quick:nth-child(3n){background:#fff0e8}
-.status{display:none;align-items:center;gap:10px;margin:14px 0 0;border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:18px;padding:12px 14px;font-size:13px;font-weight:850}
-.status.show{display:flex}
-.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.28);border-top-color:var(--lime);border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-.section{display:none;margin-top:34px}
-.section.show{display:block}
-.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}
-.sectionTitle{font-size:29px;font-weight:1000;letter-spacing:-1.1px;margin:0}
-.sectionSub{font-size:13px;line-height:1.45;color:var(--muted);font-weight:720;margin-top:4px}
-.smallAction{border:1px solid var(--ink);background:var(--paper);border-radius:999px;padding:9px 12px;font-size:12px;font-weight:950}
-.aiStrip{display:none;margin-bottom:12px;background:#e9edff;border:1px solid #b9c4ff;border-radius:18px;padding:12px 14px}
-.aiStrip.show{display:block}.aiStrip b{font-size:10px;text-transform:uppercase;letter-spacing:.8px}.aiStrip span{display:block;margin-top:4px;font-size:14px;font-weight:800;color:#2c3150}
-.resultGrid{display:grid;grid-template-columns:1fr;gap:13px}
-.placeCard{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.04);overflow:hidden}
-.placeCard.best{border:1.5px solid var(--ink)}
-.placeCard.best:before{content:"BEST PICK";position:absolute;right:0;top:0;background:var(--lime);border-left:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:7px 10px;border-radius:0 22px 0 12px;font-size:9px;font-weight:1000;letter-spacing:.8px}
-.placeCard.picked{outline:4px solid rgba(94,123,255,.22);transform:translateY(-2px)}
-.cardTop{display:flex;gap:12px;align-items:flex-start}
-.rankBubble{flex:0 0 auto;width:42px;height:42px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:1000}
-.placeCard.best .rankBubble{background:var(--lime);color:var(--ink);border:1px solid var(--ink)}
-.cardBody{min-width:0;flex:1}
-.cardMeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
-.badge{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 8px;font-size:10px;font-weight:950;background:#f7f4ec;color:var(--muted)}
-.badge.time{background:#e8f7c1;color:#1b2a00;border-color:#c6e679}
-.placeName{font-size:22px;line-height:1.08;letter-spacing:-.6px;font-weight:1000;margin:0 0 6px;padding-right:56px}
-.placeAddr{font-size:13px;color:var(--muted);line-height:1.4;font-weight:680}
-.why{font-size:12px;color:#4e5156;font-weight:780;margin-top:8px}
-.cardActions{display:grid;grid-template-columns:1.25fr repeat(3,1fr);gap:7px;margin-top:14px}
-.cardActions a,.cardActions button{border:1px solid var(--line);background:#f7f4ec;color:var(--ink);text-decoration:none;border-radius:13px;padding:10px 7px;text-align:center;font-size:11px;font-weight:950}
-.cardActions a.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
-.cardActions button.saved{background:#e9edff;border-color:#aebaff}
-.empty{border:1.5px dashed var(--ink);background:var(--paper);border-radius:22px;padding:24px;text-align:center;font-weight:800;color:var(--muted)}
-.empty strong{display:block;color:var(--ink);font-size:20px;margin-bottom:6px}
-.fallbackRow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.fallback{display:inline-block;text-decoration:none;border:1px solid var(--ink);border-radius:999px;padding:10px 13px;font-size:12px;font-weight:950;background:var(--paper);color:var(--ink)}
-.fallback.primary{background:var(--blue);color:#fff}
-.sheetBackdrop{position:fixed;inset:0;z-index:70;background:rgba(13,14,15,.35);opacity:0;pointer-events:none;transition:.2s}
-.sheetBackdrop.show{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--paper);border-radius:28px 28px 0 0;padding:12px 18px calc(22px + env(safe-area-inset-bottom));transform:translateY(105%);transition:.25s ease;box-shadow:0 -20px 60px rgba(0,0,0,.18)}
-.sheet.show{transform:translateY(0)}
-.handle{width:44px;height:5px;border-radius:999px;background:#d5d0c5;margin:0 auto 16px}
-.sheetHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.sheetHead h3{font-size:24px;margin:0;letter-spacing:-.7px}.closeBtn{border:0;background:#eee9df;width:38px;height:38px;border-radius:50%;font-size:18px}
-.filterField{margin:17px 0}.filterLabel{display:flex;justify-content:space-between;font-size:13px;font-weight:950;margin-bottom:10px}.filterField input{width:100%}
-.filterHint{font-size:12px;color:var(--muted);line-height:1.45;font-weight:700}
-.bottomNav{position:fixed;left:50%;bottom:max(12px,env(safe-area-inset-bottom));z-index:50;transform:translateX(-50%);width:min(calc(100% - 24px),520px);display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:rgba(13,14,15,.94);backdrop-filter:blur(18px);border-radius:22px;padding:6px;box-shadow:0 16px 48px rgba(0,0,0,.26)}
-.navBtn{border:0;background:transparent;color:#aeb1b5;border-radius:16px;padding:10px 6px;font-size:11px;font-weight:950}.navBtn.active{background:#fff;color:var(--ink)}
-.navCount{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--lime);color:var(--ink)}
-.toast{position:fixed;left:50%;bottom:92px;z-index:100;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:var(--ink);color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;font-weight:950;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
-.settingsCard{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:18px}.settingsRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.settingsRow:last-child{border-bottom:0}.settingsRow b{display:block;font-size:14px}.settingsRow span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.settingsRow button{border:1px solid var(--ink);background:var(--lime);border-radius:999px;padding:8px 11px;font-size:11px;font-weight:950}
-@media(min-width:760px){.shell{padding-left:24px;padding-right:24px}.resultGrid{grid-template-columns:repeat(2,1fr)}.sheet{left:50%;right:auto;width:min(520px,calc(100% - 24px));transform:translate(-50%,110%);border-radius:28px;bottom:18px}.sheet.show{transform:translate(-50%,0)}.cardActions{grid-template-columns:1.4fr repeat(3,1fr)}}
+.modeSwitch{display:flex;gap:5px;background:var(--soft);border-radius:999px;padding:4px}.modeBtn{border:0;background:transparent;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:950;color:var(--muted)}.modeBtn.active{background:var(--ink);color:var(--paper)}
+.searchActions{display:flex;gap:7px;align-items:center}.iconBtn,.askBtn{border-radius:999px;font-weight:950}.iconBtn{width:42px;height:42px;border:1px solid var(--line);background:var(--soft);font-size:18px}.askBtn{border:1.5px solid var(--ink);background:var(--accent);color:var(--ink);padding:11px 16px;min-width:110px}html[data-theme="mono"] .askBtn{background:#000;color:#fff}.askBtn:disabled{opacity:.55}
+.quickRow{display:flex;gap:8px;overflow-x:auto;padding:15px 0 4px;scrollbar-width:none}.quickRow::-webkit-scrollbar{display:none}.quick{white-space:nowrap;border:1px solid var(--line);background:var(--paper);border-radius:15px;padding:10px 12px;font-size:13px;font-weight:900}.quick:nth-child(2n){background:var(--soft2)}.quick:nth-child(3n){background:color-mix(in srgb,var(--accent3) 35%,var(--paper))}
+.status{display:none;align-items:center;gap:10px;margin:14px 0 0;border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:18px;padding:12px 14px;font-size:13px;font-weight:850}.status.show{display:flex}.spinner{width:14px;height:14px;border:2px solid color-mix(in srgb,var(--paper) 28%,transparent);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.section{display:none;margin-top:34px}.section.show{display:block}.sectionHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}.sectionTitle{font-size:29px;font-weight:1000;letter-spacing:-1.1px;margin:0}.sectionSub{font-size:13px;line-height:1.45;color:var(--muted);font-weight:720;margin-top:4px}.smallAction{border:1px solid var(--ink);background:var(--paper);border-radius:999px;padding:9px 12px;font-size:12px;font-weight:950}
+.aiStrip{display:none;margin-bottom:12px;background:var(--soft2);border:1px solid var(--line);border-radius:18px;padding:12px 14px}.aiStrip.show{display:block}.aiStrip b{font-size:10px;text-transform:uppercase;letter-spacing:.8px}.aiStrip span{display:block;margin-top:4px;font-size:14px;font-weight:800;color:var(--ink)}
+.resultGrid{display:grid;grid-template-columns:1fr;gap:13px}.placeCard{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--cardRadius);padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.04);overflow:hidden;backdrop-filter:blur(var(--blur))}html[data-theme="midnight"] .placeCard{box-shadow:0 10px 30px rgba(0,0,0,.22)}html[data-theme="glass"] .placeCard{border-color:rgba(255,255,255,.58)}
+.placeCard.best{border:1.5px solid var(--ink)}.placeCard.best:before{content:"BEST PICK";position:absolute;right:0;top:0;background:var(--accent);color:var(--ink);border-left:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:7px 10px;border-radius:0 calc(var(--cardRadius) - 2px) 0 12px;font-size:9px;font-weight:1000;letter-spacing:.8px}.placeCard.picked{outline:4px solid color-mix(in srgb,var(--accent2) 22%,transparent);transform:translateY(-2px)}
+.cardTop{display:flex;gap:12px;align-items:flex-start}.rankBubble{flex:0 0 auto;width:42px;height:42px;border-radius:14px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:15px;font-weight:1000}html[data-theme="mono"] .rankBubble{border-radius:0}.placeCard.best .rankBubble{background:var(--accent);color:var(--ink);border:1px solid var(--ink)}
+.cardBody{min-width:0;flex:1}.cardMeta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}.badge{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:6px 8px;font-size:10px;font-weight:950;background:var(--soft);color:var(--muted)}.badge.time{background:color-mix(in srgb,var(--accent) 46%,var(--paper));color:var(--ink);border-color:color-mix(in srgb,var(--accent) 58%,var(--line))}
+.placeName{font-size:22px;line-height:1.08;letter-spacing:-.6px;font-weight:1000;margin:0 0 6px;padding-right:56px}.placeAddr{font-size:13px;color:var(--muted);line-height:1.4;font-weight:680}.why{font-size:12px;color:var(--muted);font-weight:780;margin-top:8px}.cardActions{display:grid;grid-template-columns:1.25fr repeat(3,1fr);gap:7px;margin-top:14px}.cardActions a,.cardActions button{border:1px solid var(--line);background:var(--soft);color:var(--ink);text-decoration:none;border-radius:13px;padding:10px 7px;text-align:center;font-size:11px;font-weight:950}.cardActions a.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}.cardActions button.saved{background:var(--soft2);border-color:var(--accent2)}
+.empty{border:1.5px dashed var(--ink);background:var(--paper);border-radius:22px;padding:24px;text-align:center;font-weight:800;color:var(--muted)}.empty strong{display:block;color:var(--ink);font-size:20px;margin-bottom:6px}.fallbackRow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}.fallback{display:inline-block;text-decoration:none;border:1px solid var(--ink);border-radius:999px;padding:10px 13px;font-size:12px;font-weight:950;background:var(--paper);color:var(--ink)}.fallback.primary{background:var(--accent2);color:#fff}
+.sheetBackdrop{position:fixed;inset:0;z-index:70;background:rgba(13,14,15,.35);opacity:0;pointer-events:none;transition:.2s}.sheetBackdrop.show{opacity:1;pointer-events:auto}.sheet{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--paper);color:var(--ink);border-radius:28px 28px 0 0;padding:12px 18px calc(22px + env(safe-area-inset-bottom));transform:translateY(105%);transition:.25s ease;box-shadow:0 -20px 60px rgba(0,0,0,.18);backdrop-filter:blur(var(--blur))}.sheet.show{transform:translateY(0)}
+.handle{width:44px;height:5px;border-radius:999px;background:var(--line);margin:0 auto 16px}.sheetHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.sheetHead h3{font-size:24px;margin:0;letter-spacing:-.7px}.closeBtn{border:0;background:var(--soft);width:38px;height:38px;border-radius:50%;font-size:18px}.filterField{margin:17px 0}.filterLabel{display:flex;justify-content:space-between;font-size:13px;font-weight:950;margin-bottom:10px}.filterField input{width:100%}.filterHint{font-size:12px;color:var(--muted);line-height:1.45;font-weight:700}
+.bottomNav{position:fixed;left:50%;bottom:max(12px,env(safe-area-inset-bottom));z-index:50;transform:translateX(-50%);width:min(calc(100% - 24px),520px);display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:var(--nav);backdrop-filter:blur(18px);border-radius:22px;padding:6px;box-shadow:0 16px 48px rgba(0,0,0,.26)}html[data-theme="mono"] .bottomNav{border-radius:0}.navBtn{border:0;background:transparent;color:var(--navText);border-radius:16px;padding:10px 6px;font-size:11px;font-weight:950}.navBtn.active{background:var(--navActive);color:var(--ink)}.navCount{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:999px;background:var(--accent);color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:92px;z-index:100;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:999px;font-size:12px;font-weight:950;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.settingsCard{background:var(--paper);border:1px solid var(--line);border-radius:var(--cardRadius);padding:18px;backdrop-filter:blur(var(--blur))}.settingsRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.settingsRow:last-child{border-bottom:0}.settingsRow b{display:block;font-size:14px}.settingsRow span{display:block;color:var(--muted);font-size:12px;margin-top:3px}.settingsRow button{border:1px solid var(--ink);background:var(--accent);color:var(--ink);border-radius:999px;padding:8px 11px;font-size:11px;font-weight:950}
+.themeTitle{margin:28px 0 10px;font-size:17px;font-weight:1000;letter-spacing:-.3px}.themeSub{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:12px}.themeGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.themeOption{position:relative;border:1.5px solid var(--line);background:var(--paper);border-radius:18px;padding:10px;text-align:left;min-height:112px;overflow:hidden}.themeOption.selected{border-color:var(--ink);box-shadow:0 0 0 2px var(--accent)}.themeOption b{display:block;font-size:13px;margin-top:8px}.themeOption small{color:var(--muted);font-size:10px;font-weight:700}
+.themePreview{height:58px;border-radius:12px;border:1px solid rgba(0,0,0,.12);overflow:hidden;display:grid;grid-template-columns:28% 1fr;gap:5px;padding:6px}.themePreview .tpSide{border-radius:6px}.themePreview .tpMain{display:grid;grid-template-rows:15px 1fr;gap:5px}.themePreview .tpBar,.themePreview .tpCard{border-radius:6px}
+.p-paper{background:#f3f0e8}.p-paper .tpSide{background:#0d0e0f}.p-paper .tpBar{background:#c7ff3d}.p-paper .tpCard{background:#fffdf8}.p-midnight{background:#07090d}.p-midnight .tpSide{background:#7b61ff}.p-midnight .tpBar{background:#a7ff3f}.p-midnight .tpCard{background:#10141b}.p-glass{background:#dcecff}.p-glass .tpSide{background:#4c6fff}.p-glass .tpBar{background:#78d8ff}.p-glass .tpCard{background:rgba(255,255,255,.8)}.p-sunset{background:#fff2e9}.p-sunset .tpSide{background:#351819}.p-sunset .tpBar{background:#ff9f5a}.p-sunset .tpCard{background:#fffaf5}.p-mono{background:#f5f5f5}.p-mono .tpSide{background:#000}.p-mono .tpBar{background:#000}.p-mono .tpCard{background:#fff;border:1px solid #000;border-radius:0}
+@media(min-width:760px){.shell{padding-left:24px;padding-right:24px}.resultGrid{grid-template-columns:repeat(2,1fr)}.sheet{left:50%;right:auto;width:min(520px,calc(100% - 24px));transform:translate(-50%,110%);border-radius:28px;bottom:18px}.sheet.show{transform:translate(-50%,0)}.cardActions{grid-template-columns:1.4fr repeat(3,1fr)}.themeGrid{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 <body>
 <div class="shell">
-  <header class="topbar">
-    <div class="logo"><span class="logoMark"></span>WhatNow</div>
-    <button class="locationBtn" id="locBtn">Use location</button>
-  </header>
-
-  <main id="homeView">
-    <section class="hero">
-      <div class="kicker"><span class="kickerDot"></span>Nearby ideas, minus the overthinking</div>
-      <h1>Okay. <span class="heroAccent">What now?</span></h1>
-      <p class="heroCopy">Tell me the mood. I’ll turn it into real nearby places and rank them by how long they actually take to reach.</p>
-
-      <div class="searchCard">
-        <div class="searchTop">
-          <div class="promptLabel">What are you in the mood for?</div>
-          <textarea id="q" maxlength="400" placeholder="Something fun with friends, cheap, and under 20 minutes away..."></textarea>
-        </div>
-        <div class="searchBottom">
-          <div class="modeSwitch">
-            <button class="modeBtn active" data-mode="drive">Drive</button>
-            <button class="modeBtn" data-mode="walk">Walk</button>
-            <button class="modeBtn" data-mode="bicycle">Bike</button>
-          </div>
-          <div class="searchActions">
-            <button class="iconBtn" id="surpriseBtn" aria-label="Surprise me">↻</button>
-            <button class="iconBtn" id="filterBtn" aria-label="Filters">☰</button>
-            <button class="askBtn" id="goBtn">Find it</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="quickRow">
-        <button class="quick" data-q="something fun to do with friends">Fun with friends</button>
-        <button class="quick" data-q="somewhere good and affordable to eat">Cheap food</button>
-        <button class="quick" data-q="an arcade bowling or mini golf place">Games</button>
-        <button class="quick" data-q="a nice park or scenic place">Outside</button>
-        <button class="quick" data-q="a chill coffee shop">Coffee</button>
-        <button class="quick" data-q="a thrift store with cool cheap stuff">Thrift</button>
-      </div>
-
-      <div class="status" id="thinking"><span class="spinner"></span><span id="thinkingText">Figuring out the move…</span></div>
-    </section>
-
-    <section class="section" id="resultsSection">
-      <div class="sectionHead">
-        <div><h2 class="sectionTitle" id="title">Your moves</h2><div class="sectionSub" id="sub"></div></div>
-        <button class="smallAction" id="pickBtn">Pick for me</button>
-      </div>
-      <div class="aiStrip" id="understood"><b>WhatNow understood</b><span id="understoodText"></span></div>
-      <div class="resultGrid" id="grid"></div>
-    </section>
-  </main>
-
-  <section class="section" id="savedView">
-    <div class="sectionHead"><div><h2 class="sectionTitle">Saved</h2><div class="sectionSub">The places you didn’t want to lose.</div></div></div>
-    <div class="resultGrid" id="savedGrid"></div>
-  </section>
-
-  <section class="section" id="settingsView">
-    <div class="sectionHead"><div><h2 class="sectionTitle">Settings</h2><div class="sectionSub">A couple useful controls. Nothing bloated.</div></div></div>
-    <div class="settingsCard">
-      <div class="settingsRow"><div><b>Location</b><span>Refresh your current GPS position.</span></div><button id="settingsLocation">Refresh</button></div>
-      <div class="settingsRow"><div><b>Default travel time</b><span id="settingsTimeText">20 minutes</span></div><button id="openFiltersFromSettings">Change</button></div>
-      <div class="settingsRow"><div><b>Clear saved places</b><span>Wipes the saved list on this device.</span></div><button id="clearSaved">Clear</button></div>
-    </div>
-  </section>
-</div>
-
-<div class="sheetBackdrop" id="sheetBackdrop"></div>
-<div class="sheet" id="filterSheet">
-  <div class="handle"></div>
-  <div class="sheetHead"><h3>Search filters</h3><button class="closeBtn" id="closeFilters">×</button></div>
-  <div class="filterField"><div class="filterLabel"><span>Maximum travel time</span><span id="timeLabel">20 min</span></div><input id="time" type="range" min="5" max="60" step="5" value="20"></div>
-  <div class="filterField"><div class="filterLabel"><span>Number of results</span><span id="countLabel">12</span></div><input id="count" type="range" min="4" max="20" value="12"></div>
-  <div class="filterHint">If you type a smaller limit like “under 10 minutes,” that wins automatically.</div>
-</div>
-
-<nav class="bottomNav">
-  <button class="navBtn active" data-view="home">Home</button>
-  <button class="navBtn" data-view="saved">Saved <span class="navCount" id="savedCount">0</span></button>
-  <button class="navBtn" data-view="settings">Settings</button>
-</nav>
-<div class="toast" id="toast"></div>
-
+<header class="topbar"><div class="logo"><span class="logoMark"></span>WhatNow</div><button class="locationBtn" id="locBtn">Use location</button></header>
+<main id="homeView">
+<section class="hero">
+<div class="kicker"><span class="kickerDot"></span>Nearby ideas, minus the overthinking</div>
+<h1>Okay. <span class="heroAccent">What now?</span></h1>
+<p class="heroCopy">Tell me the mood. I’ll turn it into real nearby places and rank them by how long they actually take to reach.</p>
+<div class="searchCard"><div class="searchTop"><div class="promptLabel">What are you in the mood for?</div><textarea id="q" maxlength="400" placeholder="Something fun with friends, cheap, and under 20 minutes away..."></textarea></div>
+<div class="searchBottom"><div class="modeSwitch"><button class="modeBtn active" data-mode="drive">Drive</button><button class="modeBtn" data-mode="walk">Walk</button><button class="modeBtn" data-mode="bicycle">Bike</button></div>
+<div class="searchActions"><button class="iconBtn" id="surpriseBtn" aria-label="Surprise me">↻</button><button class="iconBtn" id="filterBtn" aria-label="Filters">☰</button><button class="askBtn" id="goBtn">Find it</button></div></div></div>
+<div class="quickRow"><button class="quick" data-q="something fun to do with friends">Fun with friends</button><button class="quick" data-q="somewhere good and affordable to eat">Cheap food</button><button class="quick" data-q="an arcade bowling or mini golf place">Games</button><button class="quick" data-q="a nice park or scenic place">Outside</button><button class="quick" data-q="a chill coffee shop">Coffee</button><button class="quick" data-q="a thrift store with cool cheap stuff">Thrift</button></div>
+<div class="status" id="thinking"><span class="spinner"></span><span id="thinkingText">Figuring out the move…</span></div>
+</section>
+<section class="section" id="resultsSection"><div class="sectionHead"><div><h2 class="sectionTitle" id="title">Your moves</h2><div class="sectionSub" id="sub"></div></div><button class="smallAction" id="pickBtn">Pick for me</button></div><div class="aiStrip" id="understood"><b>WhatNow understood</b><span id="understoodText"></span></div><div class="resultGrid" id="grid"></div></section>
+</main>
+<section class="section" id="savedView"><div class="sectionHead"><div><h2 class="sectionTitle">Saved</h2><div class="sectionSub">The places you didn’t want to lose.</div></div></div><div class="resultGrid" id="savedGrid"></div></section>
+<section class="section" id="settingsView"><div class="sectionHead"><div><h2 class="sectionTitle">Settings</h2><div class="sectionSub">Make WhatNow feel like your app.</div></div></div>
+<div class="settingsCard"><div class="settingsRow"><div><b>Location</b><span>Refresh your current GPS position.</span></div><button id="settingsLocation">Refresh</button></div><div class="settingsRow"><div><b>Default travel time</b><span id="settingsTimeText">20 minutes</span></div><button id="openFiltersFromSettings">Change</button></div><div class="settingsRow"><div><b>Clear saved places</b><span>Wipes the saved list on this device.</span></div><button id="clearSaved">Clear</button></div></div>
+<div class="themeTitle">App theme</div><div class="themeSub">Pick a full UI style. Your choice saves automatically.</div>
+<div class="themeGrid">
+<button class="themeOption" data-theme-choice="paper"><div class="themePreview p-paper"><div class="tpSide"></div><div class="tpMain"><div class="tpBar"></div><div class="tpCard"></div></div></div><b>Paper Pop</b><small>Cream + lime</small></button>
+<button class="themeOption" data-theme-choice="midnight"><div class="themePreview p-midnight"><div class="tpSide"></div><div class="tpMain"><div class="tpBar"></div><div class="tpCard"></div></div></div><b>Midnight</b><small>Dark + neon</small></button>
+<button class="themeOption" data-theme-choice="glass"><div class="themePreview p-glass"><div class="tpSide"></div><div class="tpMain"><div class="tpBar"></div><div class="tpCard"></div></div></div><b>Blue Glass</b><small>Frosted + blue</small></button>
+<button class="themeOption" data-theme-choice="sunset"><div class="themePreview p-sunset"><div class="tpSide"></div><div class="tpMain"><div class="tpBar"></div><div class="tpCard"></div></div></div><b>Sunset</b><small>Warm + colorful</small></button>
+<button class="themeOption" data-theme-choice="mono"><div class="themePreview p-mono"><div class="tpSide"></div><div class="tpMain"><div class="tpBar"></div><div class="tpCard"></div></div></div><b>Mono</b><small>Sharp + minimal</small></button>
+</div></section></div>
+<div class="sheetBackdrop" id="sheetBackdrop"></div><div class="sheet" id="filterSheet"><div class="handle"></div><div class="sheetHead"><h3>Search filters</h3><button class="closeBtn" id="closeFilters">×</button></div><div class="filterField"><div class="filterLabel"><span>Maximum travel time</span><span id="timeLabel">20 min</span></div><input id="time" type="range" min="5" max="60" step="5" value="20"></div><div class="filterField"><div class="filterLabel"><span>Number of results</span><span id="countLabel">12</span></div><input id="count" type="range" min="4" max="20" value="12"></div><div class="filterHint">If you type a smaller limit like “under 10 minutes,” that wins automatically.</div></div>
+<nav class="bottomNav"><button class="navBtn active" data-view="home">Home</button><button class="navBtn" data-view="saved">Saved <span class="navCount" id="savedCount">0</span></button><button class="navBtn" data-view="settings">Settings</button></nav><div class="toast" id="toast"></div>
 <script>
-const $=id=>document.getElementById(id);
-const state={minutes:20,count:12,mode:"drive"};
-let gps=null,thinkingTimer=null,currentResults=[];
-let favorites=JSON.parse(localStorage.getItem("whatnow:favorites")||"[]");
-const modeNames={drive:"drive",walk:"walk",bicycle:"bike ride"};
-const thinkingSteps=["Reading the vibe…","Finding real places…","Checking travel times…","Ranking the best moves…"];
+const $=id=>document.getElementById(id);const state={minutes:20,count:12,mode:"drive"};let gps=null,thinkingTimer=null,currentResults=[];let favorites=JSON.parse(localStorage.getItem("whatnow:favorites")||"[]");const themeColors={paper:"#f3f0e8",midnight:"#07090d",glass:"#dcecff",sunset:"#fff2e9",mono:"#f5f5f5"};const modeNames={drive:"drive",walk:"walk",bicycle:"bike ride"};const thinkingSteps=["Reading the vibe…","Finding real places…","Checking travel times…","Ranking the best moves…"];
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),1600)}
-function startThinking(){let i=0;$("thinking").classList.add("show");$("thinkingText").textContent=thinkingSteps[0];clearInterval(thinkingTimer);thinkingTimer=setInterval(()=>$("thinkingText").textContent=thinkingSteps[++i%thinkingSteps.length],1450)}
-function stopThinking(){clearInterval(thinkingTimer);$("thinking").classList.remove("show")}
+function applyTheme(theme,announce=false){if(!themeColors[theme])theme="paper";document.documentElement.dataset.theme=theme==="paper"?"":theme;localStorage.setItem("whatnow:theme",theme);$("themeColor").setAttribute("content",themeColors[theme]);document.querySelectorAll(".themeOption").forEach(b=>b.classList.toggle("selected",b.dataset.themeChoice===theme));if(announce)toast(`${({paper:"Paper Pop",midnight:"Midnight",glass:"Blue Glass",sunset:"Sunset",mono:"Mono"})[theme]} theme`)}
+function startThinking(){let i=0;$("thinking").classList.add("show");$("thinkingText").textContent=thinkingSteps[0];clearInterval(thinkingTimer);thinkingTimer=setInterval(()=>$("thinkingText").textContent=thinkingSteps[++i%thinkingSteps.length],1450)}function stopThinking(){clearInterval(thinkingTimer);$("thinking").classList.remove("show")}
 async function locate(force=false){if(gps&&!force)return gps;if(!navigator.geolocation)throw new Error("This browser cannot provide your location.");$("locBtn").textContent="Locating…";return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(p=>{gps={lat:p.coords.latitude,lng:p.coords.longitude};$("locBtn").textContent="Location on";$("locBtn").classList.add("on");resolve(gps)},e=>{gps=null;$("locBtn").textContent="Use location";$("locBtn").classList.remove("on");reject(new Error(e.code===1?"Location is blocked. Allow location for this website in Safari.":"I couldn’t get your location."))},{enableHighAccuracy:true,timeout:12000,maximumAge:120000}))}
-function timeoutFetch(url,options={},ms=30000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,{...options,signal:c.signal}).finally(()=>clearTimeout(t))}
-function mapsFallback(prompt){const loc=gps?` near ${gps.lat},${gps.lng}`:" near me";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(prompt+loc)}`}
-function webFallback(prompt){return `https://www.google.com/search?q=${encodeURIComponent(prompt+' near me')}`}
-function isSaved(id){return favorites.some(x=>x.id===id)}
-function findPlace(id){return currentResults.find(x=>x.id===id)||favorites.find(x=>x.id===id)}
-function saveFavorites(){localStorage.setItem("whatnow:favorites",JSON.stringify(favorites));$("savedCount").textContent=favorites.length;renderSaved()}
-function toggleSave(id){const p=findPlace(id);if(!p)return;const i=favorites.findIndex(x=>x.id===id);if(i>=0){favorites.splice(i,1);toast("Removed")}else{favorites.unshift(p);toast("Saved")};saveFavorites();renderPlaces(currentResults,$("q").value,{travelMode:state.mode})}
-async function sharePlace(id){const p=findPlace(id);if(!p)return;const text=`${p.name} — ${p.travelTimeEstimated?'about ':''}${p.travelMinutes} min away`;try{if(navigator.share)await navigator.share({title:p.name,text,url:p.mapsUri});else{await navigator.clipboard.writeText(`${text}\n${p.mapsUri}`);toast("Copied")}}catch(_){}}
-function cardHTML(p,i,savedView=false){const saved=isSaved(p.id);const mode=modeNames[p.travelMode||state.mode]||"trip";const mins=`${p.travelTimeEstimated?'~':''}${p.travelMinutes} min ${mode}`;return `<article class="placeCard ${!savedView&&i===0?'best':''}" data-card-id="${esc(p.id)}"><div class="cardTop"><div class="rankBubble">${savedView?'♥':i+1}</div><div class="cardBody"><div class="cardMeta"><span class="badge time">${esc(mins)}</span>${p.type?`<span class="badge">${esc(String(p.type).replaceAll('_',' '))}</span>`:''}</div><h3 class="placeName">${esc(p.name)}</h3><div class="placeAddr">${esc(p.address||'Address unavailable')}</div>${!savedView&&i===0?`<div class="why">Fastest strong match inside your ${state.minutes}-minute limit.</div>`:''}</div></div><div class="cardActions"><a class="primary" target="_blank" rel="noopener" href="${esc(p.mapsUri)}">Directions</a>${p.websiteUri?`<a target="_blank" rel="noopener" href="${esc(p.websiteUri)}">Website</a>`:`<a target="_blank" rel="noopener" href="${esc(p.webSearchUri)}">Search</a>`}<button data-save="${esc(p.id)}" class="${saved?'saved':''}">${saved?'Saved':'Save'}</button><button data-share="${esc(p.id)}">Share</button></div></article>`}
-function renderPlaces(places,prompt,data={}){const g=$("grid");currentResults=places.map(p=>({...p,travelMode:data.travelMode||p.travelMode||state.mode}));if(!places.length){const m=data.fallbackMapUrl||mapsFallback(prompt),w=data.fallbackWebUrl||webFallback(prompt);g.innerHTML=`<div class="empty"><strong>No clean match yet.</strong>${esc(data.warning||'Try a bigger time limit or a slightly different vibe.')}<div class="fallbackRow"><a class="fallback primary" target="_blank" rel="noopener" href="${esc(m)}">Google Maps</a><a class="fallback" target="_blank" rel="noopener" href="${esc(w)}">Search web</a></div></div>`;return}g.innerHTML=currentResults.map((p,i)=>cardHTML(p,i)).join("")}
-function renderSaved(){const g=$("savedGrid");$("savedCount").textContent=favorites.length;g.innerHTML=favorites.length?favorites.map((p,i)=>cardHTML(p,i,true)).join(""):`<div class="empty"><strong>Nothing saved.</strong>Save a place and it’ll show up here.</div>`}
-function openFilters(){$("sheetBackdrop").classList.add("show");$("filterSheet").classList.add("show")}
-function closeFilters(){$("sheetBackdrop").classList.remove("show");$("filterSheet").classList.remove("show")}
-function setMode(mode){state.mode=mode;document.querySelectorAll('.modeBtn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode))}
-function setView(view){$("homeView").style.display=view==='home'?'block':'none';$("savedView").classList.toggle('show',view==='saved');$("settingsView").classList.toggle('show',view==='settings');document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='saved')renderSaved();if(view!=='home')window.scrollTo({top:0,behavior:'smooth'})}
-async function run(prompt){const text=String(prompt||"").trim()||"something fun to do nearby";setView('home');$("resultsSection").classList.add("show");$("title").textContent="Searching…";$("sub").textContent="Using your location and travel-time limit.";$("grid").innerHTML="";$("understood").classList.remove("show");$("goBtn").disabled=true;startThinking();try{const pos=await locate(false);const r=await timeoutFetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:text,lat:pos.lat,lng:pos.lng,maxTravelMinutes:state.minutes,travelMode:state.mode,maxResults:state.count})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||`Search returned ${r.status}`);const mode=modeNames[data.travelMode]||data.travelMode||modeNames[state.mode];$("understoodText").textContent=`${data.understood||text} · up to ${data.maxTravelMinutes||state.minutes} min by ${mode}.`;$("understood").classList.add("show");$("title").textContent=data.places?.length?`${data.places.length} moves worth considering`:`Nothing solid inside the limit`;$("sub").textContent=data.places?.length?"Best mix of travel time and match quality, with duplicate locations removed.":"Try a wider time limit or another vibe.";renderPlaces(data.places||[],text,data)}catch(e){const msg=e.name==='AbortError'?"The search took too long and was stopped.":e.message;$("title").textContent="Search couldn’t finish";$("sub").textContent=msg;renderPlaces([],text,{warning:msg,fallbackMapUrl:mapsFallback(text),fallbackWebUrl:webFallback(text)})}finally{stopThinking();$("goBtn").disabled=false;$("resultsSection").scrollIntoView({behavior:'smooth',block:'start'})}}
-function pickForMe(){if(!currentResults.length){toast("Search first");return}document.querySelectorAll('.placeCard.picked').forEach(x=>x.classList.remove('picked'));const p=currentResults[Math.floor(Math.random()*currentResults.length)];const card=[...document.querySelectorAll('#grid .placeCard')].find(x=>x.dataset.cardId===p.id);if(card){card.classList.add('picked');card.scrollIntoView({behavior:'smooth',block:'center'});toast(`Go to ${p.name}`)}}
-function actionHandler(e){const save=e.target.closest('[data-save]'),share=e.target.closest('[data-share]');if(save)toggleSave(save.dataset.save);else if(share)sharePlace(share.dataset.share)}
-$("grid").addEventListener('click',actionHandler);$("savedGrid").addEventListener('click',actionHandler);
-$("goBtn").onclick=()=>run($("q").value);
-$("q").addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();run($("q").value)}});
-$("locBtn").onclick=()=>locate(true).catch(e=>alert(e.message));
-$("settingsLocation").onclick=()=>locate(true).then(()=>toast("Location refreshed")).catch(e=>alert(e.message));
-$("filterBtn").onclick=openFilters;$("openFiltersFromSettings").onclick=openFilters;$("closeFilters").onclick=closeFilters;$("sheetBackdrop").onclick=closeFilters;
-$("time").oninput=e=>{state.minutes=Number(e.target.value);$("timeLabel").textContent=state.minutes+' min';$("settingsTimeText").textContent=state.minutes+' minutes'};
-$("count").oninput=e=>{state.count=Number(e.target.value);$("countLabel").textContent=state.count};
-document.querySelectorAll('.modeBtn').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
-document.querySelectorAll('.quick').forEach(b=>b.onclick=()=>{$("q").value=b.dataset.q;run(b.dataset.q)});
-$("surpriseBtn").onclick=()=>{const a=['something fun to do with friends','a good cheap restaurant','an arcade or bowling place','a nice scenic park','a museum or interesting attraction','a chill coffee shop','a thrift store with cool stuff'];const q=a[Math.floor(Math.random()*a.length)];$("q").value=q;run(q)};
-$("pickBtn").onclick=pickForMe;
-document.querySelectorAll('.navBtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
-$("clearSaved").onclick=()=>{favorites=[];saveFavorites();toast("Saved places cleared")};
-saveFavorites();renderSaved();
+function timeoutFetch(url,options={},ms=30000){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,{...options,signal:c.signal}).finally(()=>clearTimeout(t))}function mapsFallback(prompt){const loc=gps?` near ${gps.lat},${gps.lng}`:" near me";return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(prompt+loc)}`}function webFallback(prompt){return `https://www.google.com/search?q=${encodeURIComponent(prompt+" near me")}`}
+function isSaved(id){return favorites.some(x=>x.id===id)}function findPlace(id){return currentResults.find(x=>x.id===id)||favorites.find(x=>x.id===id)}function saveFavorites(){localStorage.setItem("whatnow:favorites",JSON.stringify(favorites));$("savedCount").textContent=favorites.length;renderSaved()}function toggleSave(id){const p=findPlace(id);if(!p)return;const i=favorites.findIndex(x=>x.id===id);if(i>=0){favorites.splice(i,1);toast("Removed")}else{favorites.unshift(p);toast("Saved")}saveFavorites();renderPlaces(currentResults,$("q").value,{travelMode:state.mode})}
+async function sharePlace(id){const p=findPlace(id);if(!p)return;const text=`${p.name} — ${p.travelTimeEstimated?"about ":""}${p.travelMinutes} min away`;try{if(navigator.share)await navigator.share({title:p.name,text,url:p.mapsUri});else{await navigator.clipboard.writeText(`${text}\n${p.mapsUri}`);toast("Copied")}}catch(_){}}
+function cardHTML(p,i,savedView=false){const saved=isSaved(p.id),mode=modeNames[p.travelMode||state.mode]||"trip",mins=`${p.travelTimeEstimated?"~":""}${p.travelMinutes} min ${mode}`;return `<article class="placeCard ${!savedView&&i===0?"best":""}" data-card-id="${esc(p.id)}"><div class="cardTop"><div class="rankBubble">${savedView?"♥":i+1}</div><div class="cardBody"><div class="cardMeta"><span class="badge time">${esc(mins)}</span>${p.type?`<span class="badge">${esc(String(p.type).replaceAll("_"," "))}</span>`:""}</div><h3 class="placeName">${esc(p.name)}</h3><div class="placeAddr">${esc(p.address||"Address unavailable")}</div>${!savedView&&i===0?`<div class="why">Fastest strong match inside your ${state.minutes}-minute limit.</div>`:""}</div></div><div class="cardActions"><a class="primary" target="_blank" rel="noopener" href="${esc(p.mapsUri)}">Directions</a>${p.websiteUri?`<a target="_blank" rel="noopener" href="${esc(p.websiteUri)}">Website</a>`:`<a target="_blank" rel="noopener" href="${esc(p.webSearchUri)}">Search</a>`}<button data-save="${esc(p.id)}" class="${saved?"saved":""}">${saved?"Saved":"Save"}</button><button data-share="${esc(p.id)}">Share</button></div></article>`}
+function renderPlaces(places,prompt,data={}){const g=$("grid");currentResults=places.map(p=>({...p,travelMode:data.travelMode||p.travelMode||state.mode}));if(!places.length){const m=data.fallbackMapUrl||mapsFallback(prompt),w=data.fallbackWebUrl||webFallback(prompt);g.innerHTML=`<div class="empty"><strong>No clean match yet.</strong>${esc(data.warning||"Try a bigger time limit or a slightly different vibe.")}<div class="fallbackRow"><a class="fallback primary" target="_blank" rel="noopener" href="${esc(m)}">Google Maps</a><a class="fallback" target="_blank" rel="noopener" href="${esc(w)}">Search web</a></div></div>`;return}g.innerHTML=currentResults.map((p,i)=>cardHTML(p,i)).join("")}
+function renderSaved(){const g=$("savedGrid");$("savedCount").textContent=favorites.length;g.innerHTML=favorites.length?favorites.map((p,i)=>cardHTML(p,i,true)).join(""):`<div class="empty"><strong>Nothing saved.</strong>Save a place and it’ll show up here.</div>`}function openFilters(){$("sheetBackdrop").classList.add("show");$("filterSheet").classList.add("show")}function closeFilters(){$("sheetBackdrop").classList.remove("show");$("filterSheet").classList.remove("show")}function setMode(mode){state.mode=mode;document.querySelectorAll(".modeBtn").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode))}
+function setView(view){$("homeView").style.display=view==="home"?"block":"none";$("savedView").classList.toggle("show",view==="saved");$("settingsView").classList.toggle("show",view==="settings");document.querySelectorAll(".navBtn").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="saved")renderSaved();if(view!=="home")window.scrollTo({top:0,behavior:"smooth"})}
+async function run(prompt){const text=String(prompt||"").trim()||"something fun to do nearby";setView("home");$("resultsSection").classList.add("show");$("title").textContent="Searching…";$("sub").textContent="Using your location and travel-time limit.";$("grid").innerHTML="";$("understood").classList.remove("show");$("goBtn").disabled=true;startThinking();try{const pos=await locate(false);const r=await timeoutFetch("/api/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:text,lat:pos.lat,lng:pos.lng,maxTravelMinutes:state.minutes,travelMode:state.mode,maxResults:state.count})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||`Search returned ${r.status}`);const mode=modeNames[data.travelMode]||data.travelMode||modeNames[state.mode];$("understoodText").textContent=`${data.understood||text} · up to ${data.maxTravelMinutes||state.minutes} min by ${mode}.`;$("understood").classList.add("show");$("title").textContent=data.places?.length?`${data.places.length} moves worth considering`:"Nothing solid inside the limit";$("sub").textContent=data.places?.length?"Best mix of travel time and match quality, with duplicate locations removed.":"Try a wider time limit or another vibe.";renderPlaces(data.places||[],text,data)}catch(e){const msg=e.name==="AbortError"?"The search took too long and was stopped.":e.message;$("title").textContent="Search couldn’t finish";$("sub").textContent=msg;renderPlaces([],text,{warning:msg,fallbackMapUrl:mapsFallback(text),fallbackWebUrl:webFallback(text)})}finally{stopThinking();$("goBtn").disabled=false;$("resultsSection").scrollIntoView({behavior:"smooth",block:"start"})}}
+function pickForMe(){if(!currentResults.length){toast("Search first");return}document.querySelectorAll(".placeCard.picked").forEach(x=>x.classList.remove("picked"));const p=currentResults[Math.floor(Math.random()*currentResults.length)],card=[...document.querySelectorAll("#grid .placeCard")].find(x=>x.dataset.cardId===p.id);if(card){card.classList.add("picked");card.scrollIntoView({behavior:"smooth",block:"center"});toast(`Go to ${p.name}`)}}function actionHandler(e){const save=e.target.closest("[data-save]"),share=e.target.closest("[data-share]");if(save)toggleSave(save.dataset.save);else if(share)sharePlace(share.dataset.share)}
+$("grid").addEventListener("click",actionHandler);$("savedGrid").addEventListener("click",actionHandler);$("goBtn").onclick=()=>run($("q").value);$("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();run($("q").value)}});$("locBtn").onclick=()=>locate(true).catch(e=>alert(e.message));$("settingsLocation").onclick=()=>locate(true).then(()=>toast("Location refreshed")).catch(e=>alert(e.message));$("filterBtn").onclick=openFilters;$("openFiltersFromSettings").onclick=openFilters;$("closeFilters").onclick=closeFilters;$("sheetBackdrop").onclick=closeFilters;$("time").oninput=e=>{state.minutes=Number(e.target.value);$("timeLabel").textContent=state.minutes+" min";$("settingsTimeText").textContent=state.minutes+" minutes"};$("count").oninput=e=>{state.count=Number(e.target.value);$("countLabel").textContent=state.count};document.querySelectorAll(".modeBtn").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));document.querySelectorAll(".quick").forEach(b=>b.onclick=()=>{$("q").value=b.dataset.q;run(b.dataset.q)});$("surpriseBtn").onclick=()=>{const a=["something fun to do with friends","a good cheap restaurant","an arcade or bowling place","a nice scenic park","a museum or interesting attraction","a chill coffee shop","a thrift store with cool stuff"];const q=a[Math.floor(Math.random()*a.length)];$("q").value=q;run(q)};$("pickBtn").onclick=pickForMe;document.querySelectorAll(".navBtn").forEach(b=>b.onclick=()=>setView(b.dataset.view));$("clearSaved").onclick=()=>{favorites=[];saveFavorites();toast("Saved places cleared")};document.querySelectorAll(".themeOption").forEach(b=>b.onclick=()=>applyTheme(b.dataset.themeChoice,true));applyTheme(localStorage.getItem("whatnow:theme")||"paper");saveFavorites();renderSaved();
 </script>
 </body>
 </html>
